@@ -29,7 +29,7 @@ func (u *UptimeInfo) StopPlugin() {
 }
 
 func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
-	ret, err := u.Execute(nil)
+	ret, err := u.Execute()
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
 	}
@@ -37,7 +37,7 @@ func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
 	u.global.GetHttpTools().WriteData(w, ret)
 }
 
-func (u *UptimeInfo) Execute(p map[string]string) (map[string]string, error) {
+func (u *UptimeInfo) Execute() (map[string]string, error) {
 	var ret = make(map[string]string)
 	out, err := u.global.GetCmdTools().Execute("uptime", "")
 	if err == nil {

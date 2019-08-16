@@ -29,7 +29,11 @@ func loadPlugins(g *common.Global) {
 	uptimeinfo := new(plugins.UptimeInfo)
 	uptimeinfo.InitPlugin(g)
 
+	pidinfo := new(plugins.GetPidInfo)
+	pidinfo.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(uptimeinfo)
+	g.RegisterPlugin(pidinfo)
 }

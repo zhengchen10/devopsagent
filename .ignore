@@ -1,0 +1,5 @@
+./.idea/*
+./.ignore
+./src/main/app.log
+./src/main/main.debug.exe
+./src/main/main.exe
