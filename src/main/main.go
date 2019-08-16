@@ -32,8 +32,12 @@ func loadPlugins(g *common.Global) {
 	pidinfo := new(plugins.GetPidInfo)
 	pidinfo.InitPlugin(g)
 
+	getthreads := new(plugins.GetProcessThreads)
+	getthreads.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(uptimeinfo)
 	g.RegisterPlugin(pidinfo)
+	g.RegisterPlugin(getthreads)
 }

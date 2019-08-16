@@ -49,7 +49,7 @@ func (u *GetPidInfo) Execute(pname string) (string, error) {
 		params = params + "|grep " + item[i] + " "
 	}
 	//params = params + "| awk '{print $2}'"
-	out := u.global.GetCmdTools().ExecuteWithCallback("ps", params, context, u.ExecuteCallback)
+	out := u.global.GetCmdTools().ExecuteWithCallback("ps", params, context, true, u.ExecuteCallback)
 
 	if out {
 
