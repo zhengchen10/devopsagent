@@ -8,13 +8,13 @@ import (
 )
 
 type File struct {
-	name string
+	Path string
 }
 
 //使用os.OpenFile()相关函数打开文件对象，并使用文件对象的相关方法进行文件写入操作
 //清空一次文件
 func (f *File) CreateNew() bool {
-	fileObj, err := os.OpenFile(f.name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	fileObj, err := os.OpenFile(f.Path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		fmt.Println("Failed to open the file", err.Error())
 		return false
@@ -24,7 +24,7 @@ func (f *File) CreateNew() bool {
 }
 
 func (f *File) AppendContent(content string) bool {
-	fileObj, err := os.OpenFile(f.name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	fileObj, err := os.OpenFile(f.Path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println("Failed to open the file", err.Error())
 		return false
@@ -37,7 +37,7 @@ func (f *File) AppendContent(content string) bool {
 }
 
 func (f *File) ReadContent() string {
-	b, err := ioutil.ReadFile(f.name)
+	b, err := ioutil.ReadFile(f.Path)
 	if err != nil {
 		fmt.Print(err)
 		return ""
@@ -48,7 +48,7 @@ func (f *File) ReadContent() string {
 }
 
 func (f *File) Delete() bool {
-	err := os.Remove(f.name) //删除文件test.txt
+	err := os.Remove(f.Path) //删除文件test.txt
 	if err != nil {
 		//输出错误详细信息
 		fmt.Printf("%s", err)

@@ -23,4 +23,8 @@ func loadPlugins(g *common.Global) {
 	healthCheck := new(plugins.HealthCheck)
 	healthCheck.InitPlugin(g)
 	g.RegisterPlugin(healthCheck)
+
+	uploadfile := new(plugins.UploadFile)
+	uploadfile.InitPlugin(g)
+	g.RegisterPlugin(uploadfile)
 }

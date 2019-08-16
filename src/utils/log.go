@@ -13,7 +13,7 @@ type Log struct {
 //var logFile = ""
 func (l *Log) InitLog(fileName string) {
 	l.logFileName = fileName
-	l.logFile = File{name: l.logFileName}
+	l.logFile = File{Path: l.logFileName}
 
 }
 func (l *Log) LogA(level, address, msg string) {

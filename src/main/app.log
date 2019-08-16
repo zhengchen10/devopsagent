@@ -12,3 +12,21 @@
 2019-08-15 15:31:30 [INFO] HealthCheck InitPlugin
 2019-08-15 15:31:30 [INFO] Global RegisterPlugin [HealthCheck]
 2019-08-15 15:31:30 [INFO] Start Server at [9080]
+2019-08-15 17:04:24 [INFO] Global Init Global
+2019-08-15 17:04:24 [INFO] HealthCheck InitPlugin
+2019-08-15 17:04:24 [INFO] Global RegisterPlugin [HealthCheck]
+2019-08-15 17:04:24 [INFO] UploadFile InitPlugin
+2019-08-15 17:04:24 [INFO] Global RegisterPlugin [UploadFile]
+2019-08-15 17:04:24 [INFO] Start Server at [9080]
+2019-08-15 17:08:18 [INFO] Global Init Global
+2019-08-15 17:08:18 [INFO] HealthCheck InitPlugin
+2019-08-15 17:08:18 [INFO] Global RegisterPlugin [HealthCheck]
+2019-08-15 17:08:18 [INFO] UploadFile InitPlugin
+2019-08-15 17:08:18 [INFO] Global RegisterPlugin [UploadFile]
+2019-08-15 17:08:18 [INFO] Start Server at [9080]
+2019-08-15 17:26:54 [INFO] Global Init Global
+2019-08-15 17:26:54 [INFO] HealthCheck InitPlugin
+2019-08-15 17:26:54 [INFO] Global RegisterPlugin [HealthCheck]
+2019-08-15 17:26:54 [INFO] UploadFile InitPlugin
+2019-08-15 17:26:54 [INFO] Global RegisterPlugin [UploadFile]
+2019-08-15 17:26:54 [INFO] Start Server at [9080]
