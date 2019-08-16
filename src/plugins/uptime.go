@@ -2,33 +2,55 @@ package plugins
 
 import "common"
 import "net/http"
-import "io"
-import "os"
-import "utils"
-import "fmt"
+import "strings"
 
 type UptimeInfo struct {
+	me     string
 	global *common.Global
 }
 
 func (u *UptimeInfo) GetName() string {
-	return "UptimeInfo"
+	return u.me
 }
 
 func (u *UptimeInfo) InitPlugin(g *common.Global) {
+	u.me = "UptimeInfo"
 	u.global = g
-	g.GetLog().InfoA("UptimeInfo", "InitPlugin")
-	g.GetRouter().HandleFunc("/uptime", u.uploadHandler)
+	g.GetLog().InfoA(u.me, "InitPlugin")
+	g.GetRouter().HandleFunc("/uptime", u.uptimeHandler)
 }
 
-func (u *UploadFile) StartPlugin() {
-
-}
-
-func (u *UploadFile) StopPlugin() {
+func (u *UptimeInfo) StartPlugin() {
 
 }
 
-func (u *UploadFile) uploadHandler(w http.ResponseWriter, r *http.Request) {
-	u.global.GetHttpTools().WriteSuccess(w)
+func (u *UptimeInfo) StopPlugin() {
+
+}
+
+func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
+	ret, err := u.Execute(nil)
+	if err != nil {
+		u.global.GetHttpTools().WriteError(w, -1)
+	}
+
+	u.global.GetHttpTools().WriteData(w, ret)
+}
+
+func (u *UptimeInfo) Execute(p map[string]string) (map[string]string, error) {
+	var ret = make(map[string]string)
+	out, err := u.global.GetCmdTools().Execute("uptime", "")
+	if err == nil {
+		startIndex := strings.LastIndex(out, "load average: ") + 14
+		endIndex := len(out)
+		stringTools := u.global.GetStringTools()
+		substring := stringTools.SubString(out, startIndex, endIndex)
+		items := strings.Split(substring, ",")
+		ret["1min"] = stringTools.Trim(items[0])
+		ret["5min"] = stringTools.Trim(items[1])
+		ret["15min"] = stringTools.Trim(items[2])
+		return ret, nil
+	}
+
+	return ret, err
 }

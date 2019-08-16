@@ -22,9 +22,14 @@ func main() {
 func loadPlugins(g *common.Global) {
 	healthCheck := new(plugins.HealthCheck)
 	healthCheck.InitPlugin(g)
-	g.RegisterPlugin(healthCheck)
 
 	uploadfile := new(plugins.UploadFile)
 	uploadfile.InitPlugin(g)
+
+	uptimeinfo := new(plugins.UptimeInfo)
+	uptimeinfo.InitPlugin(g)
+
+	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
+	g.RegisterPlugin(uptimeinfo)
 }
