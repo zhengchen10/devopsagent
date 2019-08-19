@@ -41,8 +41,10 @@ func (u *GetProcessThreads) threadsHandler(w http.ResponseWriter, r *http.Reques
 
 func (u *GetProcessThreads) Execute(pid string) (string, error) {
 	context := make(map[string]string)
-	params := "-p " + pid + " |wc -l"
-	u.global.GetCmdTools().ExecuteWithCallback("pstree", params, context, true, u.ExecuteCallback)
+	//params := "-p " + pid + " |wc -l"
+	//u.global.GetCmdTools().ExecuteWithCallback("pstree", params, context, true, u.ExecuteCallback)
+	params := "hH p " + pid + "|wc -l"
+	u.global.GetCmdTools().ExecuteWithCallback("ps", params, context, true, u.ExecuteCallback)
 	return context["count"], nil
 }
 

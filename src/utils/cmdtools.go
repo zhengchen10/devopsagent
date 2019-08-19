@@ -56,7 +56,7 @@ func (c *CmdTools) ExecuteWithCallback(command, param string, context interface{
 	for {
 		line, isprefix, err2 := reader.ReadLine()
 		if err2 != nil || io.EOF == err2 {
-			fmt.Println(err2)
+			//fmt.Println(err2)
 			break
 		}
 		if !isprefix {
@@ -65,7 +65,7 @@ func (c *CmdTools) ExecuteWithCallback(command, param string, context interface{
 				break
 			}
 		}
-		fmt.Println("output : " + string(line))
+		//fmt.Println("output : " + string(line))
 	}
 	cmd.Wait()
 	return true

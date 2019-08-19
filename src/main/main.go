@@ -35,9 +35,13 @@ func loadPlugins(g *common.Global) {
 	getthreads := new(plugins.GetProcessThreads)
 	getthreads.InitPlugin(g)
 
+	jstat := new(plugins.JStat)
+	jstat.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(uptimeinfo)
 	g.RegisterPlugin(pidinfo)
 	g.RegisterPlugin(getthreads)
+	g.RegisterPlugin(jstat)
 }
