@@ -40,8 +40,8 @@ func (u *JStat) jstatHandler(w http.ResponseWriter, r *http.Request) {
 	u.global.GetHttpTools().WriteData(w, ret)
 }
 
-func (u *JStat) Execute(pid string) (map[string]string, error) {
-	context := make(map[string]string)
+func (u *JStat) Execute(pid string) (map[string]interface{}, error) {
+	context := make(map[string]interface{})
 	//params := "-p " + pid + " |wc -l"
 	//u.global.GetCmdTools().ExecuteWithCallback("pstree", params, context, true, u.ExecuteCallback)
 	params := "-gcutil " + pid + " 1 1"

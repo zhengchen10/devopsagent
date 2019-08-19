@@ -37,8 +37,8 @@ func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
 	u.global.GetHttpTools().WriteData(w, ret)
 }
 
-func (u *UptimeInfo) Execute() (map[string]string, error) {
-	var ret = make(map[string]string)
+func (u *UptimeInfo) Execute() (map[string]interface{}, error) {
+	var ret = make(map[string]interface{})
 	out, err := u.global.GetCmdTools().Execute("uptime", "", true)
 	if err == nil {
 		startIndex := strings.LastIndex(out, "load average: ") + 14

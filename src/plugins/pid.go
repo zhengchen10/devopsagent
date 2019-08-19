@@ -36,13 +36,13 @@ func (u *GetPidInfo) pidHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
 	}
-	context := make(map[string]string)
+	context := make(map[string]interface{})
 	context["pid"] = ret
 	u.global.GetHttpTools().WriteData(w, context)
 }
 
 func (u *GetPidInfo) Execute(pname string) (string, error) {
-	context := make(map[string]string)
+	context := make(map[string]interface{})
 	item := strings.Split(pname, ",") // 支持按名字查询进程，多名字按,分割
 	params := "-ef"
 	for i := 0; i < len(item); i++ {
@@ -54,10 +54,8 @@ func (u *GetPidInfo) Execute(pname string) (string, error) {
 	if out {
 
 	}
-	for key, value := range context {
-		fmt.Println(key + ":" + value)
-	}
-	return context["pid"], nil
+
+	return context["pid"].(string), nil
 }
 
 func (u *GetPidInfo) ExecuteCallback(cmd *exec.Cmd, line string, context interface{}) bool {

@@ -37,7 +37,17 @@ func (ht *HttpTools) WriteError(w http.ResponseWriter, errorCode int) {
 func (ht *HttpTools) WriteSuccess(w http.ResponseWriter) {
 	w.Write([]byte("{\"success\":true}"))
 }
-func (ht *HttpTools) WriteData(w http.ResponseWriter, data map[string]string) {
+func (ht *HttpTools) WriteData(w http.ResponseWriter, data map[string]interface{}) {
+	str, err := json.Marshal(data)
+
+	if err != nil {
+		//fmt.Println(err)
+	}
+	content := "{\"success\":true,\"data\":" + string(str) + "}"
+	w.Write([]byte(content))
+}
+
+func (ht *HttpTools) WriteList(w http.ResponseWriter, data []map[string]interface{}) {
 	str, err := json.Marshal(data)
 
 	if err != nil {

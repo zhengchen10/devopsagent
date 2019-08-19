@@ -38,10 +38,14 @@ func loadPlugins(g *common.Global) {
 	jstat := new(plugins.JStat)
 	jstat.InitPlugin(g)
 
+	listfiles := new(plugins.ListFiles)
+	listfiles.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(uptimeinfo)
 	g.RegisterPlugin(pidinfo)
 	g.RegisterPlugin(getthreads)
 	g.RegisterPlugin(jstat)
+	g.RegisterPlugin(listfiles)
 }

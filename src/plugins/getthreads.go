@@ -34,7 +34,7 @@ func (u *GetProcessThreads) threadsHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
 	}
-	context := make(map[string]string)
+	context := make(map[string]interface{})
 	context["count"] = ret
 	u.global.GetHttpTools().WriteData(w, context)
 }
