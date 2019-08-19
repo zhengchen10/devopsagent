@@ -21,8 +21,9 @@ func (g *Global) InitGlobal(r *mux.Router) {
 	g.config.InitConfig("app.conf")
 
 	logPath := g.config.GetProperty("logPath")
+	logLevel := g.config.GetProperty("logLevel")
 	g.log = new(utils.Log)
-	g.log.InitLog(logPath + "app.log")
+	g.log.InitLog(logPath+"app.log", logLevel)
 
 	g.random = new(utils.Random)
 	g.random.InitRandom()
