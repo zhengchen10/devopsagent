@@ -41,6 +41,9 @@ func loadPlugins(g *common.Global) {
 	listfiles := new(plugins.ListFiles)
 	listfiles.InitPlugin(g)
 
+	tailfile := new(plugins.TailFile)
+	tailfile.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(uptimeinfo)
@@ -48,4 +51,5 @@ func loadPlugins(g *common.Global) {
 	g.RegisterPlugin(getthreads)
 	g.RegisterPlugin(jstat)
 	g.RegisterPlugin(listfiles)
+	g.RegisterPlugin(tailfile)
 }

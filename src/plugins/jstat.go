@@ -34,6 +34,7 @@ func (u *JStat) jstatHandler(w http.ResponseWriter, r *http.Request) {
 	ret, err := u.Execute(pid)
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
+		return
 	}
 	//context := make(map[string]string)
 	//context["count"] = ret

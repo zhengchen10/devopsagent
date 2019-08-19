@@ -33,6 +33,7 @@ func (u *GetProcessThreads) threadsHandler(w http.ResponseWriter, r *http.Reques
 	ret, err := u.Execute(pid)
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
+		return
 	}
 	context := make(map[string]interface{})
 	context["count"] = ret

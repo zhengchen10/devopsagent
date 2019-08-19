@@ -32,6 +32,7 @@ func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
 	ret, err := u.Execute()
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
+		return
 	}
 
 	u.global.GetHttpTools().WriteData(w, ret)

@@ -35,8 +35,6 @@ func (u *ListFiles) listFilesHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
 	}
-	context := make(map[string]interface{})
-	context["count"] = ret
 	u.global.GetHttpTools().WriteList(w, ret)
 }
 
