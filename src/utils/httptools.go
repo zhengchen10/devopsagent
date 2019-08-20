@@ -56,3 +56,12 @@ func (ht *HttpTools) WriteList(w http.ResponseWriter, data []map[string]interfac
 	content := "{\"success\":true,\"data\":" + string(str) + "}"
 	w.Write([]byte(content))
 }
+
+func (ht *HttpTools) WriteObject(w http.ResponseWriter, data map[string]interface{}) {
+	str, err := json.Marshal(data)
+
+	if err != nil {
+		//fmt.Println(err)
+	}
+	w.Write([]byte(string(str)))
+}

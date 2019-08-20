@@ -1,4 +1,5 @@
 ./.idea/*
+./.idea/inspectionProfiles/*
 ./.ignore
 ./src/main/app.log
 ./src/main/main.debug.exe

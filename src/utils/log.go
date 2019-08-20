@@ -6,13 +6,14 @@ import (
 )
 
 type Log struct {
-	logFileName string
-	logFile     File
-	logLevel    int
+	logFileName  string
+	logFile      File
+	logLevel     int
+	logFileLevel int
 }
 
 //var logFile = ""
-func (l *Log) InitLog(fileName string, logLevel string) {
+func (l *Log) InitLog(fileName string, logLevel string, logFileLevel string) {
 	l.logFileName = fileName
 	l.logFile = File{Path: l.logFileName}
 	l.logLevel = 0
@@ -27,14 +28,25 @@ func (l *Log) InitLog(fileName string, logLevel string) {
 	} else if logLevel == "NONE" {
 		l.logLevel = 4
 	}
-
+	l.logFileLevel = 3
+	if logFileLevel == "DEBUG" {
+		l.logFileLevel = 0
+	} else if logFileLevel == "INFO" {
+		l.logFileLevel = 1
+	} else if logFileLevel == "WARN" {
+		l.logFileLevel = 2
+	} else if logFileLevel == "ERROR" {
+		l.logFileLevel = 3
+	} else if logFileLevel == "NONE" {
+		l.logFileLevel = 4
+	}
 }
-func (l *Log) LogA(level, address, msg string) {
+func (l *Log) LogA(level, address, msg string, showConsole, showFile bool) {
 	newmsg := address + " " + msg
-	l.Log(level, newmsg)
+	l.Log(level, newmsg, showConsole, showFile)
 }
 
-func (l *Log) Log(level, msg string) {
+func (l *Log) Log(level, msg string, showConsole, showFile bool) {
 	current := time.Now()
 	year := current.Year()
 	month := current.Month()
@@ -49,47 +61,33 @@ func (l *Log) Log(level, msg string) {
 }
 
 func (l *Log) Debug(msg string) {
-	if l.logLevel < 1 {
-		l.Log("DEBUG", msg)
-	}
+	l.Log("DEBUG", msg, l.logLevel < 1, l.logFileLevel < 1)
 }
+
 func (l *Log) Info(msg string) {
-	if l.logLevel < 2 {
-		l.Log("INFO", msg)
-	}
+	l.Log("INFO", msg, l.logLevel < 2, l.logFileLevel < 2)
 }
+
 func (l *Log) Warn(msg string) {
-	if l.logLevel < 3 {
-		l.Log("WARN", msg)
-	}
+	l.Log("WARN", msg, l.logLevel < 3, l.logFileLevel < 3)
 }
 
 func (l *Log) Error(msg string) {
-	if l.logLevel < 4 {
-		l.Log("ERROR", msg)
-	}
+	l.Log("ERROR", msg, l.logLevel < 4, l.logFileLevel < 4)
 }
 
 func (l *Log) DebugA(address, msg string) {
-	if l.logLevel < 1 {
-		l.LogA("DEBUG", address, msg)
-	}
+	l.LogA("DEBUG", address, msg, l.logLevel < 1, l.logFileLevel < 1)
 }
 
 func (l *Log) InfoA(address, msg string) {
-	if l.logLevel < 2 {
-		l.LogA("INFO", address, msg)
-	}
+	l.LogA("INFO", address, msg, l.logLevel < 2, l.logFileLevel < 2)
 }
 
 func (l *Log) WarnA(address, msg string) {
-	if l.logLevel < 3 {
-		l.LogA("WARN", address, msg)
-	}
+	l.LogA("WARN", address, msg, l.logLevel < 3, l.logFileLevel < 3)
 }
 
 func (l *Log) ErrorA(address, msg string) {
-	if l.logLevel < 4 {
-		l.LogA("ERROR", address, msg)
-	}
+	l.LogA("ERROR", address, msg, l.logLevel < 4, l.logFileLevel < 4)
 }

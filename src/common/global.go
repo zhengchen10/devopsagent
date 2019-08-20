@@ -1,18 +1,23 @@
 package common
 
-import "utils"
+import (
+	"io"
+	"net/http"
+	"utils"
+)
 import "github.com/gorilla/mux"
 
 type Global struct {
-	log     *utils.Log
-	config  *utils.Config
-	router  *mux.Router
-	random  *utils.Random
-	http    *utils.HttpTools
-	md5     *utils.MD5
-	cmd     *utils.CmdTools
-	strtool *utils.StringTools
-	plugins map[string]AppPlugin
+	log      *utils.Log
+	config   *utils.Config
+	router   *mux.Router
+	random   *utils.Random
+	http     *utils.HttpTools
+	md5      *utils.MD5
+	cmd      *utils.CmdTools
+	strtool  *utils.StringTools
+	plugins  map[string]AppPlugin
+	handlers map[string]RequestHandler
 }
 
 func (g *Global) InitGlobal(r *mux.Router) {
@@ -22,8 +27,9 @@ func (g *Global) InitGlobal(r *mux.Router) {
 
 	logPath := g.config.GetProperty("logPath")
 	logLevel := g.config.GetProperty("logLevel")
+	logFileLevel := g.config.GetProperty("logFileLevel")
 	g.log = new(utils.Log)
-	g.log.InitLog(logPath+"app.log", logLevel)
+	g.log.InitLog(logPath+"app.log", logLevel, logFileLevel)
 
 	g.random = new(utils.Random)
 	g.random.InitRandom()
@@ -32,7 +38,7 @@ func (g *Global) InitGlobal(r *mux.Router) {
 	g.cmd = new(utils.CmdTools)
 	g.strtool = new(utils.StringTools)
 	g.plugins = make(map[string]AppPlugin)
-
+	g.handlers = make(map[string]RequestHandler)
 	g.cmd.SetLogger(g.log)
 	g.router = r
 	g.log.InfoA("Global", "Init Global")
@@ -41,6 +47,29 @@ func (g *Global) InitGlobal(r *mux.Router) {
 func (g *Global) RegisterPlugin(p AppPlugin) {
 	g.log.InfoA("Global", "RegisterPlugin ["+p.GetName()+"]")
 	g.plugins[p.GetName()] = p
+}
+
+func (g *Global) RegisterHandler(req string, h RequestHandler) {
+	g.log.InfoA("Global", "Register Handler ["+h.GetName()+"] for URI [/"+req+"]")
+	g.handlers["/"+req] = h
+	g.router.HandleFunc("/"+req, g.handlerFunc)
+}
+
+func (g *Global) handlerFunc(w http.ResponseWriter, r *http.Request) {
+	handler := g.handlers[r.RequestURI]
+	if handler == nil {
+		io.WriteString(w, "{\"success\":false}")
+		return
+	}
+	params := handler.GetRequestParams()
+	reqParams := make(map[string]string)
+	for _, p := range params {
+		value := r.FormValue(p)
+		reqParams[p] = value
+	}
+
+	result := handler.Execute(reqParams)
+	g.GetHttpTools().WriteObject(w, result)
 }
 
 func (g *Global) GetPlugin(name string) AppPlugin {
