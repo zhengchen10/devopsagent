@@ -1,7 +1,6 @@
 package plugins
 
 import "common"
-import "net/http"
 import "os/exec"
 import "strings"
 
@@ -18,7 +17,8 @@ func (u *ListFiles) InitPlugin(g *common.Global) {
 	u.me = "ListFiles"
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
-	g.GetRouter().HandleFunc("/listfiles", u.listFilesHandler)
+	//g.GetRouter().HandleFunc("/listfiles", u.listFilesHandler)
+	g.RegisterHandler("listfiles", u)
 }
 
 func (u *ListFiles) StartPlugin() {
@@ -29,16 +29,33 @@ func (u *ListFiles) StopPlugin() {
 
 }
 
-func (u *ListFiles) listFilesHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ListFiles) GetRequestParams() []string {
+	var params []string
+	params = append(params, "path")
+	return params
+}
+
+func (h *ListFiles) Execute(params map[string]string) (map[string]interface{}, int) {
+	path := params["path"]
+	ret, err := h.ExecuteWithParams(path)
+	if err != nil {
+		return nil, -1
+	}
+	result := make(map[string]interface{})
+	result["files"] = ret
+	return result, 0
+}
+
+/*func (u *ListFiles) listFilesHandler(w http.ResponseWriter, r *http.Request) {
 	path := r.FormValue("path")
 	ret, err := u.Execute(path)
 	if err != nil {
 		u.global.GetHttpTools().WriteError(w, -1)
 	}
 	u.global.GetHttpTools().WriteList(w, ret)
-}
+}*/
 
-func (u *ListFiles) Execute(path string) ([]map[string]interface{}, error) {
+func (u *ListFiles) ExecuteWithParams(path string) ([]map[string]interface{}, error) {
 	context := make(map[string]interface{})
 	var list []map[string]interface{}
 	context["dataList"] = list

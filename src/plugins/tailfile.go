@@ -3,7 +3,6 @@ package plugins
 import (
 	"common"
 )
-import "net/http"
 import "os/exec"
 import "strings"
 import "strconv"
@@ -21,7 +20,8 @@ func (u *TailFile) InitPlugin(g *common.Global) {
 	u.me = "TailFile"
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
-	g.GetRouter().HandleFunc("/tailfile", u.tailFileHandler)
+	//g.GetRouter().HandleFunc("/tailfile", u.tailFileHandler)
+	g.RegisterHandler("tailfile", u)
 }
 
 func (u *TailFile) StartPlugin() {
@@ -32,7 +32,36 @@ func (u *TailFile) StopPlugin() {
 
 }
 
-func (u *TailFile) tailFileHandler(w http.ResponseWriter, r *http.Request) {
+func (h *TailFile) GetRequestParams() []string {
+	var params []string
+	params = append(params, "path")
+	params = append(params, "lines")
+	return params
+}
+
+func (h *TailFile) Execute(params map[string]string) (map[string]interface{}, int) {
+	path := params["path"]
+	lines := params["lines"]
+	line := 50
+	if len(lines) > 0 {
+		line, err := strconv.Atoi(lines)
+		if err != nil {
+			line = 50
+		}
+		if line > 0 {
+
+		}
+	}
+	ret, err := h.ExecuteWithParams(path, line)
+	if err != nil {
+		return nil, -1
+	}
+	context := make(map[string]interface{})
+	context["content"] = ret
+	return context, 0
+}
+
+/*func (u *TailFile) tailFileHandler(w http.ResponseWriter, r *http.Request) {
 	path := r.FormValue("path")
 	lines := r.FormValue("lines")
 	line := 50
@@ -53,9 +82,9 @@ func (u *TailFile) tailFileHandler(w http.ResponseWriter, r *http.Request) {
 	context := make(map[string]interface{})
 	context["content"] = ret
 	u.global.GetHttpTools().WriteData(w, context)
-}
+}*/
 
-func (u *TailFile) Execute(path string, lines int) (string, error) {
+func (u *TailFile) ExecuteWithParams(path string, lines int) (string, error) {
 	params := path + " -n " + strconv.Itoa(lines)
 	ret, err := u.global.GetCmdTools().Execute("tail", params, true)
 	return ret, err

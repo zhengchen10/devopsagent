@@ -3,6 +3,7 @@ package common
 import (
 	"io"
 	"net/http"
+	"strings"
 	"utils"
 )
 import "github.com/gorilla/mux"
@@ -25,7 +26,7 @@ func (g *Global) InitGlobal(r *mux.Router) {
 	g.config = new(utils.Config)
 	g.config.InitConfig("app.conf")
 
-	logPath := g.config.GetProperty("logPath")
+	logPath := g.config.GetProperty("logFilePath")
 	logLevel := g.config.GetProperty("logLevel")
 	logFileLevel := g.config.GetProperty("logFileLevel")
 	g.log = new(utils.Log)
@@ -56,7 +57,12 @@ func (g *Global) RegisterHandler(req string, h RequestHandler) {
 }
 
 func (g *Global) handlerFunc(w http.ResponseWriter, r *http.Request) {
-	handler := g.handlers[r.RequestURI]
+	url := r.RequestURI
+	pos := strings.Index(url, "?")
+	if pos >= 0 {
+		url = g.strtool.SubString(url, 0, pos)
+	}
+	handler := g.handlers[url]
 	if handler == nil {
 		io.WriteString(w, "{\"success\":false}")
 		return
@@ -68,8 +74,12 @@ func (g *Global) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		reqParams[p] = value
 	}
 
-	result := handler.Execute(reqParams)
-	g.GetHttpTools().WriteObject(w, result)
+	result, err := handler.Execute(reqParams)
+	if err != 0 {
+		g.GetHttpTools().WriteError(w, err)
+	} else {
+		g.GetHttpTools().WriteData(w, result)
+	}
 }
 
 func (g *Global) GetPlugin(name string) AppPlugin {

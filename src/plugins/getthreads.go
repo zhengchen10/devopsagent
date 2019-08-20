@@ -1,7 +1,6 @@
 package plugins
 
 import "common"
-import "net/http"
 import "os/exec"
 
 type GetProcessThreads struct {
@@ -17,7 +16,8 @@ func (u *GetProcessThreads) InitPlugin(g *common.Global) {
 	u.me = "GetProcessThreads"
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
-	g.GetRouter().HandleFunc("/threads", u.threadsHandler)
+	g.RegisterHandler("threads", u)
+	//g.GetRouter().HandleFunc("/threads", u.threadsHandler)
 }
 
 func (u *GetProcessThreads) StartPlugin() {
@@ -27,26 +27,28 @@ func (u *GetProcessThreads) StartPlugin() {
 func (u *GetProcessThreads) StopPlugin() {
 
 }
-
-func (u *GetProcessThreads) threadsHandler(w http.ResponseWriter, r *http.Request) {
-	pid := r.FormValue("pid")
-	ret, err := u.Execute(pid)
-	if err != nil {
-		u.global.GetHttpTools().WriteError(w, -1)
-		return
-	}
-	context := make(map[string]interface{})
-	context["count"] = ret
-	u.global.GetHttpTools().WriteData(w, context)
+func (h *GetProcessThreads) GetRequestParams() []string {
+	var params []string
+	params = append(params, "pid")
+	return params
 }
 
-func (u *GetProcessThreads) Execute(pid string) (string, error) {
-	context := make(map[string]string)
+func (h *GetProcessThreads) Execute(params map[string]string) (map[string]interface{}, int) {
+	pid := params["pid"]
+	ret, err := h.ExecuteWithParams(pid)
+	if err != nil {
+		return nil, -1
+	}
+	return ret, 0
+}
+
+func (u *GetProcessThreads) ExecuteWithParams(pid string) (map[string]interface{}, error) {
+	context := make(map[string]interface{})
 	//params := "-p " + pid + " |wc -l"
 	//u.global.GetCmdTools().ExecuteWithCallback("pstree", params, context, true, u.ExecuteCallback)
 	params := "hH p " + pid + "|wc -l"
 	u.global.GetCmdTools().ExecuteWithCallback("ps", params, context, true, u.ExecuteCallback)
-	return context["count"], nil
+	return context, nil
 }
 
 func (u *GetProcessThreads) ExecuteCallback(cmd *exec.Cmd, line string, context interface{}) bool {

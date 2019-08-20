@@ -1,7 +1,6 @@
 package plugins
 
 import "common"
-import "net/http"
 import "strings"
 
 type UptimeInfo struct {
@@ -17,7 +16,8 @@ func (u *UptimeInfo) InitPlugin(g *common.Global) {
 	u.me = "UptimeInfo"
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
-	g.GetRouter().HandleFunc("/uptime", u.uptimeHandler)
+	//g.GetRouter().HandleFunc("/uptime", u.uptimeHandler)
+	g.RegisterHandler("uptime", u)
 }
 
 func (u *UptimeInfo) StartPlugin() {
@@ -28,6 +28,20 @@ func (u *UptimeInfo) StopPlugin() {
 
 }
 
+func (u *UptimeInfo) GetRequestParams() []string {
+	var params []string
+	return params
+}
+
+func (u *UptimeInfo) Execute(params map[string]string) (map[string]interface{}, int) {
+	ret, err := u.ExecuteWithParams()
+	if err != nil {
+		return nil, -1
+	}
+	return ret, 0
+}
+
+/*
 func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
 	ret, err := u.Execute()
 	if err != nil {
@@ -36,9 +50,9 @@ func (u *UptimeInfo) uptimeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u.global.GetHttpTools().WriteData(w, ret)
-}
+}*/
 
-func (u *UptimeInfo) Execute() (map[string]interface{}, error) {
+func (u *UptimeInfo) ExecuteWithParams() (map[string]interface{}, error) {
 	var ret = make(map[string]interface{})
 	out, err := u.global.GetCmdTools().Execute("uptime", "", true)
 	if err == nil {

@@ -60,7 +60,8 @@ func (c *CmdTools) ExecuteWithCallback(command, param string, context interface{
 			break
 		}
 		if !isprefix {
-			cancel := callback(cmd, string(line), context)
+			lineStr := string(line)
+			cancel := callback(cmd, lineStr, context)
 			if cancel {
 				break
 			}

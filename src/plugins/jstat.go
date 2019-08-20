@@ -1,8 +1,6 @@
 package plugins
 
 import "common"
-import "net/http"
-import "os/exec"
 import "strings"
 
 type JStat struct {
@@ -18,7 +16,8 @@ func (u *JStat) InitPlugin(g *common.Global) {
 	u.me = "JStat"
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
-	g.GetRouter().HandleFunc("/jstat", u.jstatHandler)
+	g.RegisterHandler("jstat", u)
+	//g.GetRouter().HandleFunc("/jstat", u.jstatHandler)
 }
 
 func (u *JStat) StartPlugin() {
@@ -29,6 +28,7 @@ func (u *JStat) StopPlugin() {
 
 }
 
+/*
 func (u *JStat) jstatHandler(w http.ResponseWriter, r *http.Request) {
 	pid := r.FormValue("pid")
 	ret, err := u.Execute(pid)
@@ -39,9 +39,24 @@ func (u *JStat) jstatHandler(w http.ResponseWriter, r *http.Request) {
 	//context := make(map[string]string)
 	//context["count"] = ret
 	u.global.GetHttpTools().WriteData(w, ret)
+}*/
+
+func (h *JStat) GetRequestParams() []string {
+	var params []string
+	params = append(params, "pid")
+	return params
 }
 
-func (u *JStat) Execute(pid string) (map[string]interface{}, error) {
+func (h *JStat) Execute(params map[string]string) (map[string]interface{}, int) {
+	pid := params["pid"]
+	ret, err := h.ExecuteWithParams(pid)
+	if err != nil {
+		return nil, -1
+	}
+	return ret, 0
+}
+
+func (u *JStat) ExecuteWithParams(pid string) (map[string]interface{}, error) {
 	context := make(map[string]interface{})
 	//params := "-p " + pid + " |wc -l"
 	//u.global.GetCmdTools().ExecuteWithCallback("pstree", params, context, true, u.ExecuteCallback)
@@ -89,13 +104,4 @@ func (u *JStat) Execute(pid string) (map[string]interface{}, error) {
 		}
 	}
 	return context, nil
-}
-
-func (u *JStat) ExecuteCallback(cmd *exec.Cmd, line string, context interface{}) bool {
-	if len(line) > 0 {
-		c := context.(map[string]string)
-		c["count"] = line
-	}
-
-	return false
 }

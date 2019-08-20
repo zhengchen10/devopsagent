@@ -1,8 +1,6 @@
 package plugins
 
 import "common"
-import "net/http"
-import "io"
 
 type HealthCheck struct {
 }
@@ -30,12 +28,11 @@ func (h *HealthCheck) GetRequestParams() []string {
 	return params
 }
 
-func (h *HealthCheck) Execute(params map[string]string) map[string]interface{} {
+func (h *HealthCheck) Execute(params map[string]string) (map[string]interface{}, int) {
 	ret := make(map[string]interface{})
-	ret["success"] = true
-	return ret
+	return ret, 0
 }
 
-func (h *HealthCheck) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+/*func (h *HealthCheck) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "{\"success\":true}")
-}
+}*/
