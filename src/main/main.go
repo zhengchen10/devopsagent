@@ -26,6 +26,9 @@ func loadPlugins(g *common.Global) {
 	uploadfile := new(plugins.UploadFile)
 	uploadfile.InitPlugin(g)
 
+	downloadfile := new(plugins.DownloadFile)
+	downloadfile.InitPlugin(g)
+
 	uptimeinfo := new(plugins.UptimeInfo)
 	uptimeinfo.InitPlugin(g)
 
@@ -46,6 +49,7 @@ func loadPlugins(g *common.Global) {
 
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
+	g.RegisterPlugin(downloadfile)
 	g.RegisterPlugin(uptimeinfo)
 	g.RegisterPlugin(pidinfo)
 	g.RegisterPlugin(getthreads)

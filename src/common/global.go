@@ -17,6 +17,7 @@ type Global struct {
 	md5      *utils.MD5
 	cmd      *utils.CmdTools
 	strtool  *utils.StringTools
+	ziptool  *utils.ZipTools
 	plugins  map[string]AppPlugin
 	handlers map[string]RequestHandler
 }
@@ -38,6 +39,8 @@ func (g *Global) InitGlobal(r *mux.Router) {
 	g.md5 = new(utils.MD5)
 	g.cmd = new(utils.CmdTools)
 	g.strtool = new(utils.StringTools)
+	g.ziptool = new(utils.ZipTools)
+
 	g.plugins = make(map[string]AppPlugin)
 	g.handlers = make(map[string]RequestHandler)
 	g.cmd.SetLogger(g.log)
@@ -110,4 +113,8 @@ func (g *Global) GetCmdTools() *utils.CmdTools {
 
 func (g *Global) GetStringTools() *utils.StringTools {
 	return g.strtool
+}
+
+func (g *Global) GetZipTools() *utils.ZipTools {
+	return g.ziptool
 }
