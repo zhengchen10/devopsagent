@@ -59,3 +59,16 @@ func (f *File) Delete() bool {
 		return true
 	}
 }
+
+func (u *File) IsExist(f string) bool {
+	_, err := os.Stat(f)
+	return err == nil || os.IsExist(err)
+}
+
+func (u *File) IsDir(f string) bool {
+	fi, e := os.Stat(f)
+	if e != nil {
+		return false
+	}
+	return fi.IsDir()
+}

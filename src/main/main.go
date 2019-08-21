@@ -50,6 +50,9 @@ func loadPlugins(g *common.Global) {
 	linkfile := new(plugins.LinkFile)
 	linkfile.InitPlugin(g)
 
+	removefile := new(plugins.RemoveFile)
+	removefile.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(downloadfile)
@@ -60,4 +63,5 @@ func loadPlugins(g *common.Global) {
 	g.RegisterPlugin(listfiles)
 	g.RegisterPlugin(tailfile)
 	g.RegisterPlugin(linkfile)
+	g.RegisterPlugin(removefile)
 }

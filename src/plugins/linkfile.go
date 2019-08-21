@@ -16,7 +16,6 @@ func (u *LinkFile) InitPlugin(g *common.Global) {
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
 	g.RegisterHandler("ln", u)
-	//g.GetRouter().HandleFunc("/jstat", u.jstatHandler)
 }
 
 func (u *LinkFile) StartPlugin() {
