@@ -47,6 +47,9 @@ func loadPlugins(g *common.Global) {
 	tailfile := new(plugins.TailFile)
 	tailfile.InitPlugin(g)
 
+	linkfile := new(plugins.LinkFile)
+	linkfile.InitPlugin(g)
+
 	g.RegisterPlugin(healthCheck)
 	g.RegisterPlugin(uploadfile)
 	g.RegisterPlugin(downloadfile)
@@ -56,4 +59,5 @@ func loadPlugins(g *common.Global) {
 	g.RegisterPlugin(jstat)
 	g.RegisterPlugin(listfiles)
 	g.RegisterPlugin(tailfile)
+	g.RegisterPlugin(linkfile)
 }
