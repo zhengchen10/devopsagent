@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"common"
 	"net/http"
+	"server"
 )
 import "io"
 import "os"
@@ -28,7 +29,12 @@ func (u *DownloadFile) InitPlugin(g *common.Global) {
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
 	//g.RegisterHandler("download", u)
-	g.GetRouter().HandleFunc("/download", u.downloadHandler)
+	agent := u.global.GetConfig().GetProperty("agent")
+	if agent == "TCP" {
+		//global.InitAgent(new (server.TcpAgent))
+	} else {
+		u.global.GetAppServer().(*server.HttpAgent).GetRouter().HandleFunc("/download", u.downloadHandler)
+	}
 }
 
 func (u *DownloadFile) StartPlugin() {

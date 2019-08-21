@@ -1,17 +1,13 @@
 package common
 
 import (
-	"io"
-	"net/http"
-	"strings"
 	"utils"
 )
-import "github.com/gorilla/mux"
 
 type Global struct {
-	log      *utils.Log
-	config   *utils.Config
-	router   *mux.Router
+	log    *utils.Log
+	config *utils.Config
+	//router   *mux.Router
 	random   *utils.Random
 	http     *utils.HttpTools
 	md5      *utils.MD5
@@ -20,10 +16,10 @@ type Global struct {
 	ziptool  *utils.ZipTools
 	filetool *utils.File
 	plugins  map[string]AppPlugin
-	handlers map[string]RequestHandler
+	agent    AppServer
 }
 
-func (g *Global) InitGlobal(r *mux.Router) {
+func (g *Global) InitGlobal() {
 
 	g.config = new(utils.Config)
 	g.config.InitConfig("app.conf")
@@ -31,6 +27,7 @@ func (g *Global) InitGlobal(r *mux.Router) {
 	logPath := g.config.GetProperty("logFilePath")
 	logLevel := g.config.GetProperty("logLevel")
 	logFileLevel := g.config.GetProperty("logFileLevel")
+
 	g.log = new(utils.Log)
 	g.log.InitLog(logPath+"app.log", logLevel, logFileLevel)
 
@@ -44,10 +41,19 @@ func (g *Global) InitGlobal(r *mux.Router) {
 	g.filetool = new(utils.File)
 
 	g.plugins = make(map[string]AppPlugin)
-	g.handlers = make(map[string]RequestHandler)
+
 	g.cmd.SetLogger(g.log)
-	g.router = r
+	//g.router = r
 	g.log.InfoA("Global", "Init Global")
+}
+
+func (g *Global) InitAgent(appServer AppServer) {
+	g.agent = appServer
+	g.agent.InitServer(g)
+}
+
+func (g *Global) StartAgent() {
+	g.agent.(AppServer).StartServer()
 }
 
 func (g *Global) RegisterPlugin(p AppPlugin) {
@@ -56,42 +62,13 @@ func (g *Global) RegisterPlugin(p AppPlugin) {
 }
 
 func (g *Global) RegisterHandler(req string, h RequestHandler) {
-	g.log.InfoA("Global", "Register Handler ["+h.GetName()+"] for URI [/"+req+"]")
-	g.handlers["/"+req] = h
-	g.router.HandleFunc("/"+req, g.handlerFunc)
-}
-
-func (g *Global) handlerFunc(w http.ResponseWriter, r *http.Request) {
-	url := r.RequestURI
-	pos := strings.Index(url, "?")
-	if pos >= 0 {
-		url = g.strtool.SubString(url, 0, pos)
-	}
-	handler := g.handlers[url]
-	if handler == nil {
-		io.WriteString(w, "{\"success\":false}")
-		return
-	}
-	params := handler.GetRequestParams()
-	reqParams := make(map[string]string)
-	for _, p := range params {
-		value := r.FormValue(p)
-		reqParams[p] = value
-	}
-
-	result, err := handler.Execute(reqParams)
-	if err != 0 {
-		g.GetHttpTools().WriteError(w, err)
-	} else {
-		g.GetHttpTools().WriteData(w, result)
-	}
+	g.agent.(AppServer).RegisterHandler(req, h)
+	//g.handlers["/"+req] = h
+	//g.router.HandleFunc("/"+req, g.handlerFunc)
 }
 
 func (g *Global) GetPlugin(name string) AppPlugin {
 	return g.plugins[name]
-}
-func (g *Global) GetRouter() *mux.Router {
-	return g.router
 }
 
 func (g *Global) GetLog() *utils.Log {
@@ -123,4 +100,8 @@ func (g *Global) GetZipTools() *utils.ZipTools {
 
 func (g *Global) GetFileTools() *utils.File {
 	return g.filetool
+}
+
+func (g *Global) GetAppServer() AppServer {
+	return g.agent
 }

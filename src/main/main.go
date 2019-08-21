@@ -2,21 +2,28 @@
 package main
 
 // import "fmt"
-import "net/http"
-import "github.com/gorilla/mux"
-import "common"
+//import "net/http"
+//import "github.com/gorilla/mux"
+import (
+	"common"
+	"server"
+)
 import "plugins"
 
 func main() {
 	global := new(common.Global)
-	r := mux.NewRouter()
-	global.InitGlobal(r)
-	port := global.GetConfig().GetProperty("port")
+	//r := mux.NewRouter()
+	global.InitGlobal()
 
+	agent := global.GetConfig().GetProperty("agent")
+	if agent == "TCP" {
+		global.InitAgent(new(server.TcpAgent))
+	} else {
+		global.InitAgent(new(server.HttpAgent))
+	}
 	loadPlugins(global)
-	http.Handle("/", r)
-	global.GetLog().Info("Start Server at [" + port + "]")
-	http.ListenAndServe(":"+port, nil)
+
+	global.StartAgent()
 }
 
 func loadPlugins(g *common.Global) {

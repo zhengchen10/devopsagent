@@ -1,6 +1,9 @@
 package plugins
 
-import "common"
+import (
+	"common"
+	"server"
+)
 import "net/http"
 import "io"
 import "os"
@@ -20,7 +23,14 @@ func (u *UploadFile) GetName() string {
 func (u *UploadFile) InitPlugin(g *common.Global) {
 	u.global = g
 	g.GetLog().InfoA("UploadFile", "InitPlugin")
-	g.GetRouter().HandleFunc("/upload", u.uploadHandler)
+
+	//g.GetRouter().HandleFunc("/upload", u.uploadHandler)
+	agent := u.global.GetConfig().GetProperty("agent")
+	if agent == "TCP" {
+		//global.InitAgent(new (server.TcpAgent))
+	} else {
+		u.global.GetAppServer().(*server.HttpAgent).GetRouter().HandleFunc("/download", u.uploadHandler)
+	}
 	u.authSecret = g.GetConfig().GetProperty("auth")
 	u.uploadPath = g.GetConfig().GetProperty("uploadPath")
 }
