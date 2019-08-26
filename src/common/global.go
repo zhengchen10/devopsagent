@@ -8,15 +8,17 @@ type Global struct {
 	log    *utils.Log
 	config *utils.Config
 	//router   *mux.Router
-	random   *utils.Random
-	http     *utils.HttpTools
-	md5      *utils.MD5
-	cmd      *utils.CmdTools
-	strtool  *utils.StringTools
-	ziptool  *utils.ZipTools
-	filetool *utils.File
-	plugins  map[string]AppPlugin
-	agent    AppServer
+	random       *utils.Random
+	http         *utils.HttpTools
+	md5          *utils.MD5
+	cmd          *utils.CmdTools
+	strtool      *utils.StringTools
+	ziptool      *utils.ZipTools
+	filetool     *utils.File
+	bytetool     *utils.ByteTools
+	plugins      map[string]AppPlugin
+	messageCoder *MessageCoder
+	agent        AppServer
 }
 
 func (g *Global) InitGlobal() {
@@ -39,9 +41,10 @@ func (g *Global) InitGlobal() {
 	g.strtool = new(utils.StringTools)
 	g.ziptool = new(utils.ZipTools)
 	g.filetool = new(utils.File)
-
+	g.bytetool = new(utils.ByteTools)
 	g.plugins = make(map[string]AppPlugin)
-
+	g.messageCoder = new(MessageCoder)
+	g.messageCoder.InitMessageCoder()
 	g.cmd.SetLogger(g.log)
 	//g.router = r
 	g.log.InfoA("Global", "Init Global")
@@ -104,4 +107,11 @@ func (g *Global) GetFileTools() *utils.File {
 
 func (g *Global) GetAppServer() AppServer {
 	return g.agent
+}
+func (g *Global) GetByteTools() *utils.ByteTools {
+	return g.bytetool
+}
+
+func (g *Global) GetMessageCoder() *MessageCoder {
+	return g.messageCoder
 }

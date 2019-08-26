@@ -53,7 +53,7 @@ func (s *HttpAgent) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	params := handler.GetRequestParams()
-	reqParams := make(map[string]string)
+	reqParams := make(map[string]interface{})
 	for _, p := range params {
 		value := r.FormValue(p)
 		reqParams[p] = value
@@ -65,4 +65,8 @@ func (s *HttpAgent) handlerFunc(w http.ResponseWriter, r *http.Request) {
 	} else {
 		s.global.GetHttpTools().WriteData(w, result)
 	}
+}
+
+func (s *HttpAgent) Type() string {
+	return "HTTP"
 }

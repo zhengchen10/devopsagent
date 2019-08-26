@@ -33,9 +33,9 @@ func (h *GetProcessThreads) GetRequestParams() []string {
 	return params
 }
 
-func (h *GetProcessThreads) Execute(params map[string]string) (map[string]interface{}, int) {
+func (h *GetProcessThreads) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	pid := params["pid"]
-	ret, err := h.ExecuteWithParams(pid)
+	ret, err := h.ExecuteWithParams(pid.(string))
 	if err != nil {
 		return nil, -1
 	}

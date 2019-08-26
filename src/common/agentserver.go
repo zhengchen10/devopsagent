@@ -5,4 +5,5 @@ type AppServer interface {
 	StartServer()
 	StopServer()
 	RegisterHandler(req string, h RequestHandler)
+	Type() string
 }

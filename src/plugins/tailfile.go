@@ -39,9 +39,9 @@ func (h *TailFile) GetRequestParams() []string {
 	return params
 }
 
-func (h *TailFile) Execute(params map[string]string) (map[string]interface{}, int) {
-	path := params["path"]
-	lines := params["lines"]
+func (h *TailFile) Execute(params map[string]interface{}) (map[string]interface{}, int) {
+	path := params["path"].(string)
+	lines := params["lines"].(string)
 	line := 50
 	if len(lines) > 0 {
 		line, err := strconv.Atoi(lines)

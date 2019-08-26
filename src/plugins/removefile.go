@@ -34,9 +34,9 @@ func (u *RemoveFile) GetRequestParams() []string {
 	return params
 }
 
-func (u *RemoveFile) Execute(params map[string]string) (map[string]interface{}, int) {
+func (u *RemoveFile) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	path := params["path"]
-	ret, _ := u.ExecuteWithParams(path)
+	ret, _ := u.ExecuteWithParams(path.(string))
 	if ret == nil {
 		return nil, -1
 	}

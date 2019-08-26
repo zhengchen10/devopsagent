@@ -33,7 +33,7 @@ func (u *UptimeInfo) GetRequestParams() []string {
 	return params
 }
 
-func (u *UptimeInfo) Execute(params map[string]string) (map[string]interface{}, int) {
+func (u *UptimeInfo) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	ret, err := u.ExecuteWithParams()
 	if err != nil {
 		return nil, -1

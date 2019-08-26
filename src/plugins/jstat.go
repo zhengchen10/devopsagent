@@ -47,9 +47,9 @@ func (h *JStat) GetRequestParams() []string {
 	return params
 }
 
-func (h *JStat) Execute(params map[string]string) (map[string]interface{}, int) {
+func (h *JStat) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	pid := params["pid"]
-	ret, err := h.ExecuteWithParams(pid)
+	ret, err := h.ExecuteWithParams(pid.(string))
 	if err != nil {
 		return nil, -1
 	}

@@ -48,10 +48,10 @@ func (h *GetPidInfo) GetRequestParams() []string {
 	return params
 }
 
-func (h *GetPidInfo) Execute(params map[string]string) (map[string]interface{}, int) {
+func (h *GetPidInfo) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	pname := params["pname"]
 
-	ret, err := h.ExecuteWithParams(pname)
+	ret, err := h.ExecuteWithParams(pname.(string))
 	if err != nil {
 		return nil, -1
 	}

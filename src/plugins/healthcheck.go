@@ -28,7 +28,7 @@ func (h *HealthCheck) GetRequestParams() []string {
 	return params
 }
 
-func (h *HealthCheck) Execute(params map[string]string) (map[string]interface{}, int) {
+func (h *HealthCheck) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	ret := make(map[string]interface{})
 	return ret, 0
 }

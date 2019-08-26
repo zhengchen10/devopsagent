@@ -1,6 +1,8 @@
 package plugins
 
-import "common"
+import (
+	"common"
+)
 import "os/exec"
 import "strings"
 
@@ -19,6 +21,7 @@ func (u *ListFiles) InitPlugin(g *common.Global) {
 	g.GetLog().InfoA(u.me, "InitPlugin")
 	//g.GetRouter().HandleFunc("/listfiles", u.listFilesHandler)
 	g.RegisterHandler("listfiles", u)
+
 }
 
 func (u *ListFiles) StartPlugin() {
@@ -35,9 +38,9 @@ func (h *ListFiles) GetRequestParams() []string {
 	return params
 }
 
-func (h *ListFiles) Execute(params map[string]string) (map[string]interface{}, int) {
+func (h *ListFiles) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	path := params["path"]
-	ret, err := h.ExecuteWithParams(path)
+	ret, err := h.ExecuteWithParams(path.(string))
 	if err != nil {
 		return nil, -1
 	}

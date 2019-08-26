@@ -1,6 +1,8 @@
 package plugins
 
-import "common"
+import (
+	"common"
+)
 
 type LinkFile struct {
 	me     string
@@ -16,6 +18,8 @@ func (u *LinkFile) InitPlugin(g *common.Global) {
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
 	g.RegisterHandler("ln", u)
+	g.GetMessageCoder().RegisterDecoder(10000, 1, u)
+	g.GetMessageCoder().RegisterEncoder(10000, 1, u)
 }
 
 func (u *LinkFile) StartPlugin() {
@@ -33,10 +37,10 @@ func (u *LinkFile) GetRequestParams() []string {
 	return params
 }
 
-func (u *LinkFile) Execute(params map[string]string) (map[string]interface{}, int) {
+func (u *LinkFile) Execute(params map[string]interface{}) (map[string]interface{}, int) {
 	src := params["src"]
 	dest := params["dest"]
-	ret, err := u.ExecuteWithParams(src, dest)
+	ret, err := u.ExecuteWithParams(src.(string), dest.(string))
 	if err != nil {
 		return nil, -1
 	}
@@ -53,4 +57,23 @@ func (u *LinkFile) ExecuteWithParams(src string, dest string) (map[string]interf
 
 	}
 	return context, nil
+}
+
+func (r *LinkFile) Decode(messageId, version, msgType int, data []byte) map[string]interface{} {
+	byteTools := r.global.GetByteTools()
+	ret := make(map[string]interface{})
+	if messageId == 10000 {
+		srclen := byteTools.BytesToShort(data[0:2])
+		src := data[2 : 2+srclen]
+		destlen := byteTools.BytesToShort(data[2+srclen : 4+srclen])
+		dest := data[4+srclen : 4+srclen+destlen]
+		ret["src"] = string(src)
+		ret["dest"] = string(dest)
+	}
+	return ret
+}
+
+func (r *LinkFile) Encode(messageId, version, msgType int, msg map[string]interface{}) []byte {
+	ret := make([]byte, 0)
+	return ret
 }
