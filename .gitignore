@@ -1,6 +1,7 @@
 ./.idea/*
 ./.idea/inspectionProfiles/*
-./.ignore
+./.gitignore
 ./src/main/app.log
 ./src/main/main.debug.exe
 ./src/main/main.exe
+/.idea/

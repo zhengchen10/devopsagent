@@ -1,6 +1,10 @@
 package plugins
 
-import "common"
+import (
+	"bytes"
+	"common"
+	"strconv"
+)
 import "strings"
 
 type JStat struct {
@@ -17,7 +21,8 @@ func (u *JStat) InitPlugin(g *common.Global) {
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
 	g.RegisterHandler("jstat", u)
-	//g.GetRouter().HandleFunc("/jstat", u.jstatHandler)
+	g.GetMessageCoder().RegisterDecoder(10001, 1, u)
+	g.GetMessageCoder().RegisterEncoder(10001, 1, u)
 }
 
 func (u *JStat) StartPlugin() {
@@ -104,4 +109,61 @@ func (u *JStat) ExecuteWithParams(pid string) (map[string]interface{}, error) {
 		}
 	}
 	return context, nil
+}
+
+func (r *JStat) Decode(messageId, version, msgType int, data []byte) map[string]interface{} {
+	byteTools := r.global.GetByteTools()
+	ret := make(map[string]interface{})
+	if messageId == 10001 {
+		pidlen := byteTools.BytesToShort(data[0:2])
+		pid := data[2 : 2+pidlen]
+		ret["pid"] = string(pid)
+	}
+	return ret
+}
+
+func (r *JStat) Encode(messageId, version, msgType int, msg map[string]interface{}) []byte {
+	var buffer bytes.Buffer
+	byteTools := r.global.GetByteTools()
+	s0 := msg["S0"].(string)
+	s0v, _ := strconv.ParseFloat(s0, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(s0v)))
+
+	s1 := msg["S1"].(string)
+	s1v, _ := strconv.ParseFloat(s1, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(s1v)))
+
+	e := msg["E"].(string)
+	ev, _ := strconv.ParseFloat(e, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(ev)))
+
+	o := msg["O"].(string)
+	ov, _ := strconv.ParseFloat(o, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(ov)))
+
+	m := msg["M"].(string)
+	mv, _ := strconv.ParseFloat(m, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(mv)))
+
+	ygc := msg["YGC"].(string)
+	ygcv, _ := strconv.ParseInt(ygc, 10, 32)
+	buffer.Write(byteTools.IntToBytes(int32(ygcv)))
+
+	ygct := msg["YGCT"].(string)
+	ygctv, _ := strconv.ParseFloat(ygct, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(ygctv)))
+
+	fgc := msg["FGC"].(string)
+	fgcv, _ := strconv.ParseInt(fgc, 10, 32)
+	buffer.Write(byteTools.IntToBytes(int32(fgcv)))
+
+	fgct := msg["FGCT"].(string)
+	fgctv, _ := strconv.ParseFloat(fgct, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(fgctv)))
+
+	gct := msg["GCT"].(string)
+	gctv, _ := strconv.ParseFloat(gct, 32)
+	buffer.Write(byteTools.FloatToBytes((float32)(gctv)))
+
+	return buffer.Bytes()
 }

@@ -49,3 +49,17 @@ func (bt *ByteTools) BoolToBytes(n bool) []byte {
 	binary.Write(bytesBuffer, binary.BigEndian, x)
 	return bytesBuffer.Bytes()
 }
+
+func (bt *ByteTools) BytesToFloat(b []byte) float32 {
+	bytesBuffer := bytes.NewBuffer(b)
+	var x float32
+	binary.Read(bytesBuffer, binary.BigEndian, &x)
+	return x
+}
+
+func (bt *ByteTools) FloatToBytes(n float32) []byte {
+	x := float32(n)
+	bytesBuffer := bytes.NewBuffer([]byte{})
+	binary.Write(bytesBuffer, binary.BigEndian, x)
+	return bytesBuffer.Bytes()
+}

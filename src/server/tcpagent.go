@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"common"
-	"messages"
 	"net"
 )
 
@@ -13,7 +12,6 @@ type TcpAgent struct {
 	handlers map[int]common.RequestHandler
 	msg2req  map[string]int
 
-	MessageConst *messages.MessageConst
 	//decoder  *coder.MessageDecoder
 	//encoder  *coder.MessageEncoder
 }
@@ -22,7 +20,6 @@ func (s *TcpAgent) InitServer(g *common.Global) {
 	s.me = "TcpAgent"
 	s.global = g
 	s.handlers = make(map[int]common.RequestHandler)
-	s.MessageConst = new(messages.MessageConst)
 	//s.decoder = new (coder.MessageDecoder)
 	//s.encoder = new (coder.MessageEncoder)
 	//s.decoder.Init(g)
@@ -36,8 +33,9 @@ func (s *TcpAgent) Type() string {
 
 func (s *TcpAgent) initMessagesMap() {
 	s.msg2req = map[string]int{}
-	s.msg2req["healthCheck"] = 1
+	//s.msg2req["healthCheck"] = 1
 	s.msg2req["ln"] = 10000
+	s.msg2req["jstat"] = 10001
 
 	//s.registerDecoder(s.MessageConst.LinkFileRequest(),1,new(messages.LinkFileRequest))
 	//s.registerEncoder(s.MessageConst.LinkFileResponse(),1,new(messages.LinkFileResponse))
@@ -47,7 +45,7 @@ func (s *TcpAgent) StartServer() {
 	var tcpAddr *net.TCPAddr
 	port := s.global.GetConfig().GetProperty("port")
 	//通过ResolveTCPAddr实例一个具体的tcp断点
-	tcpAddr, _ = net.ResolveTCPAddr("tcp", "127.0.0.1:"+port)
+	tcpAddr, _ = net.ResolveTCPAddr("tcp", ":"+port)
 	//打开一个tcp断点监听
 	tcpListener, _ := net.ListenTCP("tcp", tcpAddr)
 
