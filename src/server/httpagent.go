@@ -67,6 +67,10 @@ func (s *HttpAgent) handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *HttpAgent) ReadData(context map[string]interface{}, start, length int) []byte {
+	return nil
+}
+
 func (s *HttpAgent) Type() string {
 	return "HTTP"
 }

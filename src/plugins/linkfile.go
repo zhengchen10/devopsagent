@@ -18,8 +18,8 @@ func (u *LinkFile) InitPlugin(g *common.Global) {
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
 	g.RegisterHandler("ln", u)
-	g.GetMessageCoder().RegisterDecoder(10000, 1, u)
-	g.GetMessageCoder().RegisterEncoder(10000, 1, u)
+	g.GetMessageCoder().RegisterDecoder(g.GetMessages().LINK_FILE(), 1, u)
+	g.GetMessageCoder().RegisterEncoder(g.GetMessages().LINK_FILE(), 1, u)
 }
 
 func (u *LinkFile) StartPlugin() {
@@ -62,14 +62,13 @@ func (u *LinkFile) ExecuteWithParams(src string, dest string) (map[string]interf
 func (r *LinkFile) Decode(messageId, version, msgType int, data []byte) map[string]interface{} {
 	byteTools := r.global.GetByteTools()
 	ret := make(map[string]interface{})
-	if messageId == 10000 {
-		srclen := byteTools.BytesToShort(data[0:2])
-		src := data[2 : 2+srclen]
-		destlen := byteTools.BytesToShort(data[2+srclen : 4+srclen])
-		dest := data[4+srclen : 4+srclen+destlen]
-		ret["src"] = string(src)
-		ret["dest"] = string(dest)
-	}
+
+	srclen := byteTools.BytesToShort(data[0:2])
+	src := data[2 : 2+srclen]
+	destlen := byteTools.BytesToShort(data[2+srclen : 4+srclen])
+	dest := data[4+srclen : 4+srclen+destlen]
+	ret["src"] = string(src)
+	ret["dest"] = string(dest)
 	return ret
 }
 

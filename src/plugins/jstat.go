@@ -20,9 +20,9 @@ func (u *JStat) InitPlugin(g *common.Global) {
 	u.me = "JStat"
 	u.global = g
 	g.GetLog().InfoA(u.me, "InitPlugin")
-	g.RegisterHandler("jstat", u)
-	g.GetMessageCoder().RegisterDecoder(10001, 1, u)
-	g.GetMessageCoder().RegisterEncoder(10001, 1, u)
+	g.RegisterHandler(g.GetMessages().JSTAT_TEXT(), u)
+	g.GetMessageCoder().RegisterDecoder(g.GetMessages().JSTAT(), 1, u)
+	g.GetMessageCoder().RegisterEncoder(g.GetMessages().JSTAT(), 1, u)
 }
 
 func (u *JStat) StartPlugin() {
@@ -114,11 +114,11 @@ func (u *JStat) ExecuteWithParams(pid string) (map[string]interface{}, error) {
 func (r *JStat) Decode(messageId, version, msgType int, data []byte) map[string]interface{} {
 	byteTools := r.global.GetByteTools()
 	ret := make(map[string]interface{})
-	if messageId == 10001 {
-		pidlen := byteTools.BytesToShort(data[0:2])
-		pid := data[2 : 2+pidlen]
-		ret["pid"] = string(pid)
-	}
+
+	pidlen := byteTools.BytesToShort(data[0:2])
+	pid := data[2 : 2+pidlen]
+	ret["pid"] = string(pid)
+
 	return ret
 }
 

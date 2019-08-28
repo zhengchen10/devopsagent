@@ -63,3 +63,17 @@ func (bt *ByteTools) FloatToBytes(n float32) []byte {
 	binary.Write(bytesBuffer, binary.BigEndian, x)
 	return bytesBuffer.Bytes()
 }
+
+func (bt *ByteTools) BytesToLong(b []byte) int64 {
+	bytesBuffer := bytes.NewBuffer(b)
+	var x int64
+	binary.Read(bytesBuffer, binary.BigEndian, &x)
+	return x
+}
+
+func (bt *ByteTools) LongToBytes(n int64) []byte {
+	x := int64(n)
+	bytesBuffer := bytes.NewBuffer([]byte{})
+	binary.Write(bytesBuffer, binary.BigEndian, x)
+	return bytesBuffer.Bytes()
+}

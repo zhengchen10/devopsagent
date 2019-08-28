@@ -18,6 +18,7 @@ type Global struct {
 	bytetool     *utils.ByteTools
 	plugins      map[string]AppPlugin
 	messageCoder *MessageCoder
+	messages     *Messages
 	agent        AppServer
 }
 
@@ -45,7 +46,10 @@ func (g *Global) InitGlobal() {
 	g.plugins = make(map[string]AppPlugin)
 	g.messageCoder = new(MessageCoder)
 	g.messageCoder.InitMessageCoder()
+
+	g.messages = new(Messages)
 	g.cmd.SetLogger(g.log)
+
 	//g.router = r
 	g.log.InfoA("Global", "Init Global")
 }
@@ -114,4 +118,12 @@ func (g *Global) GetByteTools() *utils.ByteTools {
 
 func (g *Global) GetMessageCoder() *MessageCoder {
 	return g.messageCoder
+}
+
+func (g *Global) GetMessages() *Messages {
+	return g.messages
+}
+
+func (g *Global) Random() *utils.Random {
+	return g.random
 }
