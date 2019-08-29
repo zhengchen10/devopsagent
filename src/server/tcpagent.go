@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"common"
-	"fmt"
 	"net"
 )
 
@@ -32,6 +31,8 @@ func (s *TcpAgent) initMessagesMap() {
 	s.msg2req[messages.JSTAT_TEXT()] = messages.JSTAT()
 	s.msg2req[messages.UPLOAD_FILE_TEXT()] = messages.UPLOAD_FILE()
 	s.msg2req[messages.UPLOAD_PACKAGE_TEXT()] = messages.UPLOAD_PACKAGE()
+	s.msg2req[messages.DOWNLOAD_FILE_TEXT()] = messages.DOWNLOAD_FILE()
+	s.msg2req[messages.DOWNLOAD_PACKAGE_TEXT()] = messages.DOWNLOAD_PACKAGE()
 }
 
 func (s *TcpAgent) StartServer() {
@@ -60,43 +61,47 @@ func (s *TcpAgent) StopServer() {
 
 func (s *TcpAgent) handleConnection(conn *net.TCPConn) {
 	var closeListener common.CloseListener
-	//tempBuff := make([]byte, 10000)
+	bytetools := s.global.GetByteTools()
+	header := make([]byte, 14)
 	for {
-		header := make([]byte, 14)
 		n, _ := conn.Read(header)
 		if n < 14 || header[0] != 33 || header[1] != 65 || header[2] != 82 || header[3] != 81 { // Header
 			break
 		}
-		bytetools := s.global.GetByteTools()
 		//requestSeq := bytetools.BytesToInt(header[4:6]) // requestSeq
-		messageId := bytetools.BytesToShort(header[6:8])
-		version := bytetools.BytesToShort(header[8:10])
-		length := bytetools.BytesToInt(header[10:14])
+		pos := 6
+		messageId := bytetools.BytesToShort(header, &pos)
+		version := bytetools.BytesToShort(header, &pos)
+		length := bytetools.BytesToInt(header, &pos)
 		if length > 0 {
 			tempBuff := make([]byte, length)
 			readBytes := 0
-
+			readError := false
 			for {
 				rl, _ := conn.Read(tempBuff[readBytes:length])
 				readBytes += rl
+				if rl == 0 {
+					readError = true
+					break
+				}
 				if readBytes == length {
 					break
-				} else {
-					fmt.Printf("")
 				}
 			}
-
+			if readError {
+				break
+			}
 			result, err := s.onHandleMessage(conn, messageId, version, tempBuff[0:len(tempBuff)])
 			encoder := s.global.GetMessageCoder().GetEncoder(messageId, version)
 			retBytes := encoder.Encode(messageId, version, 2, result)
 			var resultBuf bytes.Buffer
 			if err != 0 {
-				resultBuf.Write(bytetools.BoolToBytes(false))
-				resultBuf.Write(bytetools.ShortToBytes(err))
+				resultBuf.Write(bytetools.BoolToBytes(false)) // Success : false
+				resultBuf.Write(bytetools.ShortToBytes(err))  // Error :
 			} else {
-				resultBuf.Write(bytetools.BoolToBytes(true))
-				retLen := int32(len(retBytes))
-				resultBuf.Write(bytetools.IntToBytes(retLen))
+				resultBuf.Write(bytetools.BoolToBytes(true))  // Success : true
+				retLen := int32(len(retBytes))                // Data :
+				resultBuf.Write(bytetools.IntToBytes(retLen)) //
 				if retLen > 0 {
 					resultBuf.Write(retBytes)
 				}
@@ -141,6 +146,7 @@ func (s *TcpAgent) onHandleMessage(conn *net.TCPConn, messageId, version int, da
 	}
 	params := decoder.Decode(messageId, version, 1, datas)
 	params["_conn"] = conn
+	params["_messageId"] = messageId
 	if params != nil {
 		handler := s.handlers[messageId]
 		result, err := handler.Execute(params)

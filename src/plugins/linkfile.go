@@ -62,13 +62,9 @@ func (u *LinkFile) ExecuteWithParams(src string, dest string) (map[string]interf
 func (r *LinkFile) Decode(messageId, version, msgType int, data []byte) map[string]interface{} {
 	byteTools := r.global.GetByteTools()
 	ret := make(map[string]interface{})
-
-	srclen := byteTools.BytesToShort(data[0:2])
-	src := data[2 : 2+srclen]
-	destlen := byteTools.BytesToShort(data[2+srclen : 4+srclen])
-	dest := data[4+srclen : 4+srclen+destlen]
-	ret["src"] = string(src)
-	ret["dest"] = string(dest)
+	pos := 0
+	ret["src"] = byteTools.ReadString(data, &pos)
+	ret["dest"] = byteTools.ReadString(data, &pos)
 	return ret
 }
 

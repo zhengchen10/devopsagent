@@ -114,11 +114,9 @@ func (u *JStat) ExecuteWithParams(pid string) (map[string]interface{}, error) {
 func (r *JStat) Decode(messageId, version, msgType int, data []byte) map[string]interface{} {
 	byteTools := r.global.GetByteTools()
 	ret := make(map[string]interface{})
+	pos := 0
 
-	pidlen := byteTools.BytesToShort(data[0:2])
-	pid := data[2 : 2+pidlen]
-	ret["pid"] = string(pid)
-
+	ret["pid"] = byteTools.ReadString(data, &pos)
 	return ret
 }
 

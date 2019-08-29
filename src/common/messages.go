@@ -34,3 +34,19 @@ func (*Messages) UPLOAD_PACKAGE() int {
 func (*Messages) UPLOAD_PACKAGE_TEXT() string {
 	return "uploadpackage"
 }
+
+func (*Messages) DOWNLOAD_FILE() int {
+	return 10004
+}
+
+func (*Messages) DOWNLOAD_FILE_TEXT() string {
+	return "download"
+}
+
+func (*Messages) DOWNLOAD_PACKAGE() int {
+	return 10005
+}
+
+func (*Messages) DOWNLOAD_PACKAGE_TEXT() string {
+	return "downloadpackage"
+}
