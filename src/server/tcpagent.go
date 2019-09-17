@@ -33,6 +33,7 @@ func (s *TcpAgent) initMessagesMap() {
 	s.msg2req[messages.UPLOAD_PACKAGE_TEXT()] = messages.UPLOAD_PACKAGE()
 	s.msg2req[messages.DOWNLOAD_FILE_TEXT()] = messages.DOWNLOAD_FILE()
 	s.msg2req[messages.DOWNLOAD_PACKAGE_TEXT()] = messages.DOWNLOAD_PACKAGE()
+	s.msg2req[messages.MYSQL_CLIENT_TEXT()] = messages.MYSQL_CLIENT()
 }
 
 func (s *TcpAgent) StartServer() {

@@ -50,3 +50,11 @@ func (*Messages) DOWNLOAD_PACKAGE() int {
 func (*Messages) DOWNLOAD_PACKAGE_TEXT() string {
 	return "downloadpackage"
 }
+
+func (*Messages) MYSQL_CLIENT() int {
+	return 10006
+}
+
+func (*Messages) MYSQL_CLIENT_TEXT() string {
+	return "mysql"
+}

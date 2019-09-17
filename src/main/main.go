@@ -71,4 +71,11 @@ func loadPlugins(g *common.Global) {
 	g.RegisterPlugin(tailfile)
 	g.RegisterPlugin(linkfile)
 	g.RegisterPlugin(removefile)
+
+	if g.GetConfig().GetProperty("plugin.mysql") == "true" {
+		mysql := new(plugins.MysqlClient)
+		mysql.InitPlugin(g)
+		g.RegisterPlugin(mysql)
+	}
+
 }
